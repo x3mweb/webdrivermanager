@@ -1,0 +1,85 @@
+package io.github.x3mweb.advtool.base;
+
+import static io.github.x3mweb.advtool.Architecture.DEFAULT;
+import static io.github.x3mweb.advtool.Architecture.X32;
+import static io.github.x3mweb.advtool.Architecture.X64;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.util.Collection;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+
+import io.github.x3mweb.advtool.Architecture;
+import io.github.x3mweb.advtool.OperatingSystem;
+import io.github.x3mweb.advtool.WebDriverManager;
+
+/**
+
+ * @author Roman Torskyi @ Andrzej Dabrowski
+ * @since 0.0.1
+ */
+@RunWith(Parameterized.class)
+public abstract class VersionTestParent {
+
+    @Parameter
+    public Architecture architecture;
+
+    protected WebDriverManager browserManager;
+    protected String[] specificVersions;
+    protected OperatingSystem os;
+
+    final Logger log = getLogger(lookup().lookupClass());
+
+    @Parameters(name = "{index}: {0}")
+    public static Collection<Object[]> data() {
+        return asList(new Object[][] { { DEFAULT }, { X32 }, { X64 } });
+    }
+
+    @Test
+    public void testLatestVersion() throws Exception {
+        if (os != null) {
+            browserManager.operatingSystem(os);
+        }
+        switch (architecture) {
+        case X32:
+            browserManager.arch32().setup();
+            break;
+        case X64:
+            browserManager.arch64().setup();
+            break;
+        default:
+            browserManager.setup();
+        }
+
+        assertThat(browserManager.getDownloadedVersion(), notNullValue());
+    }
+
+    @Test
+    public void testSpecificVersions() throws Exception {
+        for (String specificVersion : specificVersions) {
+            log.info("Test specific version arch={} version={}", architecture,
+                    specificVersion);
+            if (architecture != DEFAULT) {
+                browserManager.architecture(architecture);
+            }
+            if (os != null) {
+                browserManager.operatingSystem(os);
+            }
+            browserManager.version(specificVersion).setup();
+
+            assertThat(browserManager.getDownloadedVersion(),
+                    equalTo(specificVersion));
+        }
+    }
+
+}
