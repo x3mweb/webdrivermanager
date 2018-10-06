@@ -23,9 +23,6 @@ public class Browser {
         webDriver = WebDriverFactory.getInstance(BrowserName);
         webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         goTo("");
-        getTitle();
-        goTo2("");
-        goTo("");
     }
 
     public static String getTitle()
@@ -43,10 +40,7 @@ public class Browser {
         webDriver.get(baseUrl + url);
     }
 
-    public static void goTo2(String pageid)
-    {
-        webDriver.get(baseUrl  + pageid);
-    }
+
     public static void close()
     {
         webDriver.close();

@@ -10,7 +10,8 @@ public class HomePageTest extends TestBase{
     @Test
     public void testH1Existing() throws InterruptedException {
         Assert.assertTrue(Browser.getTitle() != null);
-        Assert.assertTrue(Browser.goTo() ! =null);
+
+
 
     }
 

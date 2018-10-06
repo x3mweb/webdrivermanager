@@ -6,7 +6,7 @@ import utilities.Browser;
 
 public class Pages
 {
-
+//nie uzywam juz tej klasy
 
     public static HomePage homePage()
     {
